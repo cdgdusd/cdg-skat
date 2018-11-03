@@ -4,7 +4,6 @@
 package skat_KartenCollections;
 
 import skat.SkatMain;
-import skat_Karten.KartenStatus;
 import skat_Karten.Spielkarte;
 import skat_SpielRegeln.SpielArt;
 import skat_Spieler.Spieler;
@@ -13,69 +12,56 @@ import skat_Spieler.Spieler;
  * @author Claas
  *
  */
-public class Stich {
-	private int kartenZaehler;
-	private Spielkarte[] karten;
+public class Stich extends KartenCollection {
 	private Spieler[] spieler;
+	private Spieler gewinnerDesStichs;
 	//
-	public Stich() {
-		this.karten = new Spielkarte[SkatMain.ANZAHL_KARTEN_PRO_STICH];
+	public Stich(Spielkarte _k, Spieler _s) {
+		super(SkatMain.ANZAHL_KARTEN_PRO_STICH);
 		this.spieler = new Spieler[SkatMain.ANZAHL_KARTEN_PRO_STICH];
-		this.kartenZaehler = 0;
-	} // constructor
-
-	public Stich(Spielkarte _k, Spieler _s, SpielArt _sArt) {
-		this();
-		this.karten[this.kartenZaehler] = _k;
-		this.spieler[this.kartenZaehler] = _s;
-		this.kartenZaehler++;
-		_k.setStatus(KartenStatus.GESPIELT);
+		addKarteUndSpieler(_k, _s);
+		this.gewinnerDesStichs = null;
 	} // constructor
 
 	public void addKarteUndSpieler(Spielkarte _k, Spieler _s) {
-		this.karten[this.kartenZaehler] = _k;
-		this.spieler[this.kartenZaehler] = _s;
-		this.kartenZaehler++;
-		_k.setStatus(KartenStatus.GESPIELT);
+		this.spieler[getAnzahlKarten()] = _s;
+		addKarte(_k);
 		return;
 	} // addKarteUndSpieler
-	
-	@Override
-	public String toString() {
-		String result = "";
-		for (int i = 0; i < this.kartenZaehler; i++) {
-			result += this.spieler[i] + "::" + this.karten[i] + "\t";
-		}
-		return result;
-	} // toString
 
 	public Spielkarte getErsteKarte() {
-		return this.karten[0];
+		return getKarte(0);
 	} // getErsteKarte
 
-	public Spielkarte getKarte(int _i) {
-		return this.karten[_i];
-	} // getKarte
-
 	public void removeLetzteKarteUndSpieler() {
-		this.kartenZaehler--;
-		this.karten[this.kartenZaehler].setStatus(KartenStatus.IM_BLATT);
-		this.karten[this.kartenZaehler] = null;
-		this.spieler[this.kartenZaehler] = null;
+		anzahlKartenInDerCollection--;
+		karten[anzahlKartenInDerCollection] = null;
+		this.spieler[anzahlKartenInDerCollection] = null;
 		return;
 	} // removeLetzteKarteUndSpieler
 
 	public Spieler getGewinner(SpielArt _spArt) {
-		Spielkarte hoechsteKarte = this.karten[0];
-		Spieler spielerMitHoechsterKarte = this.spieler[0];
-		for (int i = 1; i < SkatMain.ANZAHL_SPIELER; i++) {
-			if (_spArt.sticht(hoechsteKarte, this.karten[i])) {
-				hoechsteKarte = this.karten[i];
-				spielerMitHoechsterKarte = this.spieler[i];
+		if (gewinnerDesStichs == null) {
+			Spielkarte hoechsteKarte = karten[0];
+			gewinnerDesStichs = this.spieler[0];
+			for (int i = 1; i < SkatMain.ANZAHL_SPIELER; i++) {
+				if (_spArt.sticht(hoechsteKarte, karten[i])) {
+					hoechsteKarte = karten[i];
+					gewinnerDesStichs = this.spieler[i];
+				}
 			}
 		}
-		return spielerMitHoechsterKarte;
+		return gewinnerDesStichs;
 	} // getGewinnerDesStichs
+	
+	@Override
+	public String toString() {
+		String result = "";
+		for (int i = 0; i < getAnzahlKarten(); i++) {
+			result += this.spieler[i] + "::" + karten[i] + "\t";
+		}
+		return result;
+	} // toString
 
 } // Stich
 

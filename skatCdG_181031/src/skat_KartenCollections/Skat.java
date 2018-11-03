@@ -9,10 +9,10 @@ import skat.SkatMain;
  * @author Claas de Groot
  *
  */
-public class Blatt extends KartenCollection {
-
-	public Blatt() {
-		super(SkatMain.ANZAHL_KARTEN_PRO_BLATT);
+public class Skat extends KartenCollection {
+	
+	public Skat() {
+		super(SkatMain.ANZAHL_KARTEN_IM_SKAT);
 	} // constructor
 
-} // Blatt
+} // Skat
